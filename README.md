@@ -9,6 +9,7 @@
     The user will be redirected to a second page where he the first n values will be displayed.
 
 **Features**
+
     1. We are storing the values in a mysql data base. so if a user enters the same value again it doesn't have to be calculated it can be displayed directly
         by retrieving the value from the database.
         
