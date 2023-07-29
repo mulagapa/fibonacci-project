@@ -14,8 +14,8 @@
     2. We are also using a cache dictionary system in this application. Where we are storing the 5 most recently used values in the flask application. 
     3.The application also contains the docker files which will support the appication to be run on any cloud service such as aws or gcp easily.
     4. The front end part of the applications is stored on the templates folder.
+    
 **Improvements**
-
     1. In this application i was using basic dictionary as my cache but it can also be used with redis (key values pair )or mysqlite (relational) to improve the time
       taken for the application to retrieve values. Instead of accessing the values from data base it can be taken from the cache server in less time.
     2. This application already contains unit test but also adding integration tests we will be able to support testing the application better.
