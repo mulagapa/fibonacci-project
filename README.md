@@ -24,8 +24,9 @@
        value of 3 and 4 it is better to store the values so that if a user asks them they can be provided.
     
 **Improvements**
-    1. In this application i was using basic dictionary as my cache but it can also be used with redis (key values pair )or mysqlite (relational) to improve the time
-      taken for the application to retrieve values. Instead of accessing the values from data base it can be taken from the cache server in less time.
+
+    1. In this application i was using basic dictionary as my cache but it can also be used with redis (key values pair )or mysqlite (relational) to improve the         time taken for the application to retrieve values. Instead of accessing the values from data base it can be taken from the cache server in less time.
+    
     2. This application already contains unit test but also adding integration tests we will be able to support testing the application better.
 
     
