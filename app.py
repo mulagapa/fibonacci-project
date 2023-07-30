@@ -1,23 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import LargeBinary, Unicode, Integer, create_engine
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import sessionmaker
-import redis
-# import mysql.connector
 from collections import OrderedDict
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:uscfpmlockshop@db/fib'
 db = SQLAlchemy(app)
-# db = mysql.connector.connect(user='manidhar', host='0.0.0.0', port='3306', password='testing', database='test')
 
-
+#cache declaration
 fibonacci_cache = OrderedDict({})
 
-
+#defining the database model
 class Fibonacci(db.Model):
     n = db.Column(db.Integer, primary_key=True)
     sequence = db.Column(db.Text)
@@ -29,22 +23,33 @@ class Fibonacci(db.Model):
 with app.app_context():
     db.create_all()
 
+#initial end point for setting the n value and calculating the n value
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
     if request.method == 'POST':
         n = int(request.form['n'])
-        session['n'] = n
-        fib_numbers = Fibonacci.query.filter_by(n=n).first();
-        cached_sequence = fibonacci_cache.get(n)
-        if fib_numbers or cached_sequence:
+        # error handling the n value
+        try:
+            if n <= 0:
+                raise ValueError("Please enter a positive integer.")
+        except ValueError:
+            error_message = "Invalid input. Please enter a positive integer."
+        if not error_message:
+            session['n'] = n
+            #checking if the  value is already in the database or the cache
+            fib_numbers = Fibonacci.query.filter_by(n=n).first();
+            cached_sequence = fibonacci_cache.get(n)
+            if fib_numbers or cached_sequence:
+                return redirect(url_for('fibonacci_list'))
+            #calculating the fibonacci series
+            sequence = generate_fibonacci(n)
+            #adding the value to the cache
+            commitingToCache(sequence,n)
+            fib = Fibonacci(n=n, sequence=','.join(map(str, sequence)))
+            #adding the value to the database
+            commitingToDatabase(fib)
             return redirect(url_for('fibonacci_list'))
-        sequence = generate_fibonacci(n)
-        # fibonacci_cache[n] = sequence
-        commitingToCache(sequence,n)
-        fib = Fibonacci(n=n, sequence=','.join(map(str, sequence)))
-        commitingToDatabase(fib)
-        return redirect(url_for('fibonacci_list'))
     return render_template('index.html')
 
 
@@ -58,7 +63,7 @@ def commitingToDatabase(fibonacci):
 
     max_retries = 3
     retires = 0
-
+    # making sure the values are added to the database happens
     while retires < max_retries:
 
         try:
