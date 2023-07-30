@@ -2,6 +2,11 @@
     The application already contains the docker file. By running the docker file you will be able to deploy and use the application with out the need for external 
     dependencies.
 
+    1. Make sure the system has docker installed.
+    2. By running 'docker-compose up' command it will run the application on the localhost.
+
+    If the docker command is not working by running the flask application the applicatio will still run.
+
 **Project Explanation**
     The project is a way of displaying the first n fibonacci numbers.
     The first page contains a text box in which users can enter the value of n. 
