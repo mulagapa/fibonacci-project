@@ -3,9 +3,8 @@
     dependencies.
 
     1. Make sure the system has docker installed.
-    2. By running 'docker-compose up' command it will run the application on the localhost.
-
-    If the docker command is not working by running the flask application the applicatio will still run.
+    2. Build the docker file by moving into the filepath and run the command 'docker build -t flask-test .' 
+    3. By running 'docker-compose up' command it will run the application on the localhost.
 
 **Project Explanation**
     The project is a way of displaying the first n fibonacci numbers.
@@ -30,7 +29,7 @@
     
 **Improvements**
 
-    1. In this application i was using basic dictionary as my cache but it can also be used with redis (key values pair )or mysqlite (relational) to improve the         time taken for the application to retrieve values. Instead of accessing the values from data base it can be taken from the cache server in less time.
+    1. In this application I was using basic dictionary as my cache but it can also be used with redis (key values pair )or mysqlite (relational) to improve the         time taken for the application to retrieve values. Instead of accessing the values from data base it can be taken from the cache server in less time.
     
     2. This application already contains unit test but also adding integration tests we will be able to support testing the application better.
 
