@@ -1,12 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for, session, make_response, abort, jsonify
+# from flask_sqlalchemy import SQLAlchemy
+import flask_sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 from collections import OrderedDict
+import time
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:uscfpmlockshop@db/fib'
-db = SQLAlchemy(app)
+db = flask_sqlalchemy.SQLAlchemy(app)
+print("after", flask_sqlalchemy)
+
 
 #cache declaration
 fibonacci_cache = OrderedDict({})
@@ -26,19 +30,21 @@ with app.app_context():
 #initial end point for setting the n value and calculating the n value
 @app.route('/', methods=['GET', 'POST'])
 def index():
-
     if request.method == 'POST':
         n = int(request.form['n'])
+        error_message = ''
         # error handling the n value
         try:
             if n <= 0:
-                raise ValueError("Please enter a positive integer.")
+                abort(404, "Invalid input. Please enter a positive integer.")
+                # return redirect(url_for('negative_test_case.html'))
+
         except ValueError:
             error_message = "Invalid input. Please enter a positive integer."
         if not error_message:
             session['n'] = n
             #checking if the  value is already in the database or the cache
-            fib_numbers = Fibonacci.query.filter_by(n=n).first();
+            fib_numbers = Fibonacci.query.filter_by(n=n).first()
             cached_sequence = fibonacci_cache.get(n)
             if fib_numbers or cached_sequence:
                 return redirect(url_for('fibonacci_list'))
@@ -52,6 +58,10 @@ def index():
             return redirect(url_for('fibonacci_list'))
     return render_template('index.html')
 
+@app.errorhandler(404)
+def bad_request(error):
+    resp = make_response(render_template('negative_test_case.html'), 404)
+    return resp
 
 def commitingToCache(sequence,n):
     if len(fibonacci_cache) == 5:
@@ -80,6 +90,8 @@ def commitingToDatabase(fibonacci):
             db.session.close()
 
 
+
+
 @app.route('/fibonacci_list')
 def fibonacci_list():
     fib_numbers = Fibonacci.query.filter_by(n=session['n']).first()
@@ -92,7 +104,7 @@ def generate_fibonacci(n):
     while len(sequence) < n:
         sequence.append(sequence[-1] + sequence[-2])
         if len(sequence) + 2 == n or len(sequence) + 1 == n:
-            fib_numbers = Fibonacci.query.filter_by(n=len(sequence)).first();
+            fib_numbers = Fibonacci.query.filter_by(n=len(sequence)).first()
             if not fib_numbers:
                 fib = Fibonacci(n=len(sequence), sequence=','.join(map(str, sequence)))
                 commitingToDatabase(fib)

@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: manidhar-test
+    image: flask-test
     container_name: app
     restart: unless-stopped
     tty: true
