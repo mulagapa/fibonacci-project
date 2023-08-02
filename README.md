@@ -27,7 +27,7 @@
        calculating for 5. This is a way of dynamic optimsation generallly followed while calculating fibonacci. In this case since we are already calculating the 
        value of 3 and 4 it is better to store the values so that if a user asks them they can be provided.
     
-**Improvements**
+**Enhancements**
 
     1. In this application I was using basic dictionary as my cache but it can also be used with redis (key values pair )or mysqlite (relational) to improve the         time taken for the application to retrieve values. Instead of accessing the values from data base it can be taken from the cache server in less time.
     
